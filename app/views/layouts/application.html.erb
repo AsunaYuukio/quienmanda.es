@@ -5,8 +5,8 @@
   <%
     # Defaults for Facebook Open Graph metadata
     @title = @title.blank? ? '' : @title+' - '
-    @title = @title + 'Quién Manda - Un proyecto de Civio'
-    @fb_description ||= "El Quién es Quién de las personas más importantes del país."
+    @title = @title + 'Kto rządzi - projekt Fundacji Media 3.0'
+    @fb_description ||= "Kto jest kim wśród najważniejszych osób w państwie."
     @fb_image_url ||= "#{request.protocol}#{request.host_with_port}/images/facebook_avatar.png"
   %>
   <title><%= @title %></title>
@@ -14,37 +14,22 @@
   <meta name="keywords" content="" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:site_name" content="QuienManda.es"/>
+  <meta property="og:site_name" content="ktorzadzi.pl"/>
   <meta property="og:type" content="article"/>
   <meta property="og:url" content="<%= request.original_url %>"/>
   <meta property="og:title" content="<%= @title %>"/>
   <meta property="og:image" content="<%= @fb_image_url %>"/>
   <meta property="og:description" content="<%= @fb_description %>"/>
 
-  <%# Twitter Summary Card Metatags for people & organizations (https://dev.twitter.com/cards/types/summary) %>
-  <% if @tw_card_summary %>
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@quien_manda" />
-  <meta name="twitter:title" content="<%= @title %>" />
-  <meta name="twitter:image" content="<%= @tw_card_photo %>" />
-  <meta name="twitter:description" content="<%= @tw_card_summary %>" />
-  <meta name="twitter:url" content="<%= request.original_url %>" />
-  <%# Twitter Photo Card Metatags for photos, posts & topics (https://dev.twitter.com/cards/types/photo) %>
-  <% elsif @tw_card_photo %>
-  <meta name="twitter:card" content="photo" />
-  <meta name="twitter:site" content="@quien_manda" />
-  <meta name="twitter:title" content="<%= @title %>" />
-  <meta name="twitter:image" content="<%= @tw_card_photo %>" />
-  <meta name="twitter:url" content="<%= request.original_url %>" />
-  <% end %>
-
   <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
   <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
   <%# Conditional CSRF as suggested by http://xyzpub.com/en/ruby-on-rails/3.2/http_caching.html %>
   <%= csrf_meta_tags unless response.cache_control[:public] %>
-  
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700|Economica:700,400italic|Libre+Baskerville:700,400italic">
 
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,300,600,400&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+
+<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
   <%= favicon_link_tag 'favicon.ico' %>
 
   <!--[if lt IE 9 ]>
@@ -62,17 +47,16 @@
   <%= auto_discovery_link_tag :rss, feed_posts_path(format: 'rss') %>
 </head>
 <body>
+  <%= disqus_init :reset => true %>
   <%= render 'shared/google_analytics' %>
   <%= render 'shared/header' %>
 
-  <div class="container">
+  <%#= render 'welcome/slider' if @welcome_page %>
+
+  <div class="container <%= @welcome_page ? "welcome-page" : "" %>">
     <!-- TODO: Move these into pages -->
-    <% unless notice.nil? %>
     <p class="alert-info"><%= notice %></p>
-    <% end %>
-    <% unless alert.nil? %>
     <p class="alert-info"><%= alert %></p>
-    <% end %>
     <%= yield %>
   </div>
 

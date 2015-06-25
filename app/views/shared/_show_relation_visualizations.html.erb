@@ -1,0 +1,61 @@
+<div id="viz-container" data-path="<%= entity_path(entity) %>" style="height: 500px;">
+
+  <div id="visualization-controls">
+<a href="#" id="control-zoom-in" data-toggle="tooltip" data-placement='bottom' data-original-title='Przybliż wizualizację'>
+    <i class="icon-zoom-in"></i>
+  </a>
+  <a href="#" id="control-zoom-out" data-toggle="tooltip" data-placement='bottom' data-original-title='Oddal wizualizację'>
+    <i class="icon-zoom-out"></i>
+  </a>
+  <a href="#" id="control-zoom-reset" data-toggle="tooltip" data-placement='bottom' data-original-title='Wróć do pozycji początkowej'>
+    <i class="icon-repeat"></i>
+  </a>
+  <a href="#" id="control-help" data-toggle="tooltip" data-placement='bottom' data-html='true' data-original-title='Poruszaj węzłami i stwórz swój własny układ wizualizacji. Kliknij w węzły, aby rozwinąć kolejne powiązania i relacje.<br/>Jeżeli szukasz więcej informacji na temat konkretnej osoby lub organizacji i jaki typ relacji je łączy najedź kursorem na linie.'>
+    <i class="icon-question-sign"></i>
+  </a>
+  <a href="#" id="dim" data-toggle="tooltip" data-placement='bottom' data-original-title='Wybierz interesujące Cię powiązanie klikając w osobę lub organizację i wyeksportuj taką wizualizację jaką chcesz.'>wybierz</a>
+  </div>
+
+  <div id="visualization-legend">    
+    <div class="legend">
+      <span class="legend-organizations"><i class="icon-circle"></i> Organizaciones</span>
+      <span class="legend-people"><i class="icon-circle"></i> Personas</span>
+    </div>
+  </div>
+
+  <div id="infobox"></div>
+</div>
+<script>
+$(function () {
+
+  var graph = new NetworkGraph("#viz-container", "#infobox");
+  graph.loadRootNode( $('#viz-container').data('path') );
+  $('#control-zoom-in').click(function() { graph.zoomIn(); return false; });
+  $('#control-zoom-out').click(function() { graph.zoomOut(); return false; });
+  $('#control-zoom-reset').click(function() { graph.zoomReset(); return false; });
+  $('#control-help').click(function() { return false; });
+  $('#visualization-controls a').tooltip();
+  $('#dim').on('click', function(){
+    $(this).toggleClass('on');
+    if($(this).hasClass('on')){
+      $('.node').css('opacity', '0.2');
+      $('path').css('opacity', '0.1');
+      $('.node').attr('selectable', true);
+      $('.node').removeAttr('selected');
+    } else {
+      $('.node').css('opacity', '1');
+      $('path').css('opacity', '1');
+      $('.node').removeAttr('selectable');
+      $('.node').removeAttr('selected');
+      $('.node').css('font-weight','normal');
+    }
+  })
+  
+});
+$(window).resize(function(){
+
+  d3.select("#viz-container svg").attr("width", $('#viz-container').width())
+
+})
+
+</script>

@@ -6,17 +6,31 @@
 </div>
 <!-- end: Page Title -->
 <div class="sharing-right">
-  <%= render 'shared/social_buttons' %>
+  <%# render 'shared/social_buttons' %>
 </div>
 
 <div id="wrapper" class="people">
 
   <div class="row-fluid">
 
-    <div id="wrapper" class="full span3">       
-      <div class="picture"><%= image_tag(entity.avatar.url ? entity.avatar.url : 'avatar.png', class: 'image') %></div>
+    <div id="wrapper" class="full span3">   <center>
+      <div class="picture "><%= image_tag(entity.avatar.url ? entity.avatar.url : 'avatar.png', class: 'image profile_image') %></div>
       <p class="title nobackground"><%= entity.name %></p>
       <p class="description"><%= entity.description %></p>
+
+      <% if entity.club_name %>
+        <p><strong>Klub:</strong> <%= entity.club_name %></p>
+      <% end %>
+      <% if entity.age %>
+        <p><strong>Wiek:</strong> <%= entity.age %> lat</p>
+      <% end %>
+      <% if entity.occupation %>
+        <p><strong>Zawód:</strong> <%= entity.occupation %></p>
+      <% end %>
+      <% if entity.attendance %>
+        <p><strong>Frekwencja:</strong> <%= entity.attendance %>%</p>
+      <% end %>
+
       <%= render '/shared/needs_work' if entity.needs_work %>
       <div class='entity-links'>
         <ul>
@@ -32,19 +46,39 @@
       </div>
       <%= render 'shared/show_admin_links', item: entity %>
     </div>
+</center>
+
 
     <div id="wrapper" class="full span9">
-      <%= render 'shared/show_entity_viz', path: entity_path(entity) %>
+      <%= render 'shared/show_relation_visualizations', entity: entity %>
+    </div>
+
+    <div class="export-container full span9">
+      <span id="embed-code-toggle" class="label toggable active" data-toggle="collapse" data-target="#embed-code">
+        <span class="show-active"><i class="icon-chevron-down"></i> Osadź wizualizację na stronie</span>
+        <span class="show-inactive"><i class="icon-chevron-up"></i> Umieść ten kod na stronie</span>
+      </span>
+      <div id="embed-code" class="collapse">
+        <div class="alert alert-info">
+          <%= @embed %>
+       </div>
+     </div>
+
+      <% javascript_include_tag 'svg_render' %>
+      <% stylesheet_link_tag 'svg_renders' %>
+
+       <span id="render-relations-toggle" class="label hand">
+         <span class="show-active"><i class="icon-chevron-down"></i> Generuj obraz jpg przedstawiający relacje</span>
+       </span>
+       <div id="render-relations" class="x-collapse">
+
+      </div>
     </div>
   </div>
 </div>
 
-<% if current_user and current_user.admin? %>
-<%= render 'shared/show_entity_timesheet', path: entity_path(entity) %>
-<% end %>
+<%= render "shared/relations_list", :list => @relations %>
 
-<%= render 'shared/relations_list', item: entity, list: @relations %>
-
-<%= render 'shared/mixed_wall', 
-            items: entity.related_posts+entity.related_photos, 
+<%= render '/shared/mixed_wall',
+            items: entity.related_posts+entity.related_photos,
             extra_wrapper_css: 'tight' %>

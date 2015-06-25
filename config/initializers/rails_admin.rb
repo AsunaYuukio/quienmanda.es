@@ -1,13 +1,19 @@
 # RailsAdmin config file. Generated on July 29, 2013 23:52
 # See github.com/sferik/rails_admin for more informations
 
+# Custom actions
+require Rails.root.join('lib', 'rails_admin', 'import.rb')
+require Rails.root.join('lib', 'rails_admin', 'delete_and_blacklist.rb')
+RailsAdmin::Config::Actions.register(RailsAdmin::Config::Actions::Import)
+RailsAdmin::Config::Actions.register(RailsAdmin::Config::Actions::DeleteAndBlacklist)
+
 RailsAdmin.config do |config|
 
 
   ################  Global configuration  ################
 
   # Set the admin name here (optional second array element will appear in red). For example:
-  config.main_app_name = ['QuienManda', 'Admin']
+  config.main_app_name = ['Ktorzadzi', 'Admin']
   # or for a more dynamic name:
   # config.main_app_name = Proc.new { |controller| [Rails.application.engine_name.titleize, controller.params['action'].titleize] }
 
@@ -32,6 +38,8 @@ RailsAdmin.config do |config|
     history_show
     toggle
     show_in_app
+    import
+    delete_and_blacklist
   end
 
   # Add our own custom admin stuff
@@ -44,7 +52,7 @@ RailsAdmin.config do |config|
   # config.audit_with :history, 'User'
 
   # Or with a PaperTrail: (you need to install it first)
-  config.audit_with :paper_trail, 'User', 'PaperTrail::Version'
+  config.audit_with :paper_trail, 'User'
 
   # Display empty fields in show views:
   # config.compact_show_view = false
@@ -54,6 +62,13 @@ RailsAdmin.config do |config|
 
   # Exclude specific models (keep the others):
   # config.excluded_models = ['Entity', 'User']
+  config.excluded_models = [
+    'MojepanstwoPlDeputy',
+    'MojepanstwoPlKrsOrganization',
+    'MojepanstwoPlKrsPerson',
+    'MojepanstwoPlPerson',
+    'MojepanstwoPlRole',
+  ]
 
   # Include specific models (exclude the others):
   # config.included_models = ['Entity', 'User']
@@ -80,6 +95,7 @@ RailsAdmin.config do |config|
   config.model 'Entity' do
     list do
       field :published, :toggle
+      field :imported_at
       field :needs_work
       field :priority
       field :person
@@ -102,10 +118,10 @@ RailsAdmin.config do |config|
           default_value Entity::PRIORITY_MEDIUM
         end
         field :avatar
-        field :tag_list do
-          label "Tags"
-          partial 'tag_list_with_suggestions'
-        end
+      end
+      group :import do
+        field :imported_at
+        field :birth_date
       end
       group :social_media do
         label "Social media / web"
@@ -149,6 +165,10 @@ RailsAdmin.config do |config|
           help 'Leave blank for the URL slug to be auto-generated'
         end
         field :notes
+        field :pesel
+        field :krs
+        field :nip
+        field :regon
         field :updated_at
       end
     end
@@ -174,7 +194,7 @@ RailsAdmin.config do |config|
         read_only true
       end
     end
-  end  
+  end
 
   config.model 'Photo' do
     list do
@@ -229,29 +249,6 @@ RailsAdmin.config do |config|
     parent Photo
   end
 
-
-  # RailsAdmin configuration
-  config.model 'Topic' do
-    list do
-      field :published, :toggle
-      field :featured, :toggle
-      field :featured_order
-      field :title
-    end
-
-    edit do
-      field :title
-      field :description
-      field :photo
-      field :entity
-      field :slug
-      field :featured
-      field :featured_order
-      field :published
-    end
-  end
-
-
   # RailsAdmin configuration
   config.model 'Post' do
     list do
@@ -259,7 +256,6 @@ RailsAdmin.config do |config|
       field :needs_work
       field :title
       field :author
-      field :tag_list
       field :published_at
     end
 
@@ -268,29 +264,33 @@ RailsAdmin.config do |config|
         label "Content"
         field :title
         field :lead
-        field :content, :ck_editor do 
+        field :content, :ck_editor do
           help 'Puedes insertar códigos como: [dc url="..."] [qm url="..." text="..."] [gdocs url="..."]'
         end
         field :author do
           inverse_of :posts
         end
-        field :mentions_in_content do
-          read_only true
-        end
+         field :mentions_in_content do
+           read_only true
+         end
       end
       group :internal do
         label "Internal"
         field :photo
-        field :show_photo_as_header
-        field :published
-        field :featured
-        field :needs_work
+        field :show_photo_as_header do
+          default_value false
+        end
+        field :published do
+          default_value false
+        end
+        field :featured do
+          default_value false
+        end
+        field :needs_work do
+          default_value true
+        end
         field :related_posts do
           read_only true
-        end
-        field :tag_list do
-          label "Tags"
-          partial 'tag_list_with_suggestions'
         end
         field :slug do
           help 'Leave blank for the URL slug to be auto-generated'
@@ -387,7 +387,7 @@ RailsAdmin.config do |config|
     end
   end
 
-  config.model 'User' do  
+  config.model 'User' do
     object_label_method :name
   end
 
@@ -403,20 +403,20 @@ RailsAdmin.config do |config|
 
   #   # Found columns:
 
-  #     configure :id, :integer 
-  #     configure :email, :string 
-  #     configure :password, :password         # Hidden 
-  #     configure :password_confirmation, :password         # Hidden 
-  #     configure :reset_password_token, :string         # Hidden 
-  #     configure :reset_password_sent_at, :datetime 
-  #     configure :remember_created_at, :datetime 
-  #     configure :sign_in_count, :integer 
-  #     configure :current_sign_in_at, :datetime 
-  #     configure :last_sign_in_at, :datetime 
-  #     configure :current_sign_in_ip, :string 
-  #     configure :last_sign_in_ip, :string 
-  #     configure :created_at, :datetime 
-  #     configure :updated_at, :datetime 
+  #     configure :id, :integer
+  #     configure :email, :string
+  #     configure :password, :password         # Hidden
+  #     configure :password_confirmation, :password         # Hidden
+  #     configure :reset_password_token, :string         # Hidden
+  #     configure :reset_password_sent_at, :datetime
+  #     configure :remember_created_at, :datetime
+  #     configure :sign_in_count, :integer
+  #     configure :current_sign_in_at, :datetime
+  #     configure :last_sign_in_at, :datetime
+  #     configure :current_sign_in_ip, :string
+  #     configure :last_sign_in_ip, :string
+  #     configure :created_at, :datetime
+  #     configure :updated_at, :datetime
 
   #   # Cross-section configuration:
 

@@ -1,14 +1,7 @@
 # The priority is based upon order of creation: first created -> highest priority.
 # See how all your routes lay out with "rake routes".
 Quienmanda::Application.routes.draw do
-  devise_for :users, :controllers => { :omniauth_callbacks => "callbacks" }, :skip => [:sessions]
-  devise_scope :user do
-    get 'login' => 'devise/sessions#new', :as => :new_user_session
-    post 'login' => 'devise/sessions#create', :as => :user_session
-    delete 'logout' => 'devise/sessions#destroy', :as => :destroy_user_session
-  end
-  # Add user profile page
-  resources :users, :only => [:show]
+  devise_for :users
 
   get '/admin/import' => 'import#index', :as => 'import_index'
   post '/admin/import/upload' => 'import#upload', :as => 'import_upload'
@@ -20,9 +13,6 @@ Quienmanda::Application.routes.draw do
   resources :posts, only: [:index, :show] do
     collection do
       get 'feed', :as => :feed, :defaults => { :format => 'atom' }
-    end
-    collection do
-      get 'tagged/:tag_name', :action => 'tagged', :as => 'tagged'
     end
   end
 
@@ -38,21 +28,24 @@ Quienmanda::Application.routes.draw do
     end
     collection do
       get 'tagged/:tag_name', :action => 'tagged', :as => 'tagged'
-      post ':id/vote-up', :action => 'vote_up', :as => 'vote_up'
-      post ':id/vote-down', :action => 'vote_down', :as => 'vote_down'
     end
   end
-
-  resources :topics, only: [:index, :show]
 
   # Global search
   get '/search' => 'search#search', :as => 'search'
 
-  # We add 'index' for the autocomplete in annotations
-  # We add 'show' so ShowInApp works in Rails Admin
-  resources :entities, only: [:index, :show]
+  # We add this route just so ShowInApp works in Rails Admin
+  resources :entities, only: [:show]
+  resources :relation_visualizations, only: [:show]
+  resources :svg_renders, only: [:create]
+
+  resources :relation_visualizations, only: [:show]
+
+  # We add this route just so ShowInApp works in Rails Admin
+  resources :entities, only: [:show]
 
   root 'welcome#index'
+  get '/o_nas' => 'welcome#about_us'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
@@ -85,7 +78,7 @@ Quienmanda::Application.routes.draw do
   #       get 'recent', on: :collection
   #     end
   #   end
-  
+
   # Example resource route with concerns:
   #   concern :toggleable do
   #     post 'toggle'

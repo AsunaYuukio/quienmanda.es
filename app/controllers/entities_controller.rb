@@ -5,12 +5,6 @@ include ApplicationHelper
 class EntitiesController < ApplicationController
   etag { can? :manage, Entity } # Don't cache admin content together with the rest
 
-  # Define entities.json used to populate autocomplete box in photo annotations
-  def index
-    @entities = (can? :manage, Entity) ? Entity : Entity.published
-    @entities = @entities.order("updated_at DESC")
-  end
-
   def show
     entity = Entity.find_by_slug(params[:id])
     if stale?(entity, :public => current_user.nil?)
@@ -22,7 +16,12 @@ class EntitiesController < ApplicationController
         # returning JSON, but for now a custom method is needed...
         format.json do
           authorize! :read, entity
-          relations = (can? :manage, Entity) ? entity.relations : entity.relations.published
+          relations = []
+          if(can? :manage, Entity)
+            entity.relations
+          else
+            entity.relations.published.map{|e| if e.target.published && e.source.published then relations.push e end}
+          end
           render json: generate_graph_data(entity, relations)
         end
       end

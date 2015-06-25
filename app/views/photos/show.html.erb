@@ -1,43 +1,35 @@
 <!-- start: Page Title -->
 <div id="page-title" class="photo">
 
-  <h2>El Fotomandón</h2>
+  <h2>W aparacie władzy</h2>
 
 </div>
 <!-- end: Page Title -->
 
 <!--start: Wrapper-->
 <div id="wrapper">
-      
+
   <!--start: Row -->
   <div class="row-fluid">
-  
+
     <div class=" span8">
 
       <div class="posts full picture">
 
-        <%= image_tag(@photo.file.url(:full), class: 'photo annotatable', id: 'photo', :data => { :photoid => @photo.id, :readonly => (can? :manage, @photo) ? 'false' : 'true' }) %>
+        <%= image_tag(@photo.file.url(:full), class: 'photo annotatable', id: 'photo') %>
 
         <%= render 'shared/photo_footer', photo: @photo %>
 
-        <div class="picture-meta">
-          <%= render 'shared/show_photo_credit', photo: @photo %>
-          <%= render 'shared/show_photo_votes', photo: @photo %>
-          <%= render 'shared/show_photo_embed', photo: @photo %>
-          <%= render 'shared/show_tags', item: @photo %>
-          <div class="clearfix"></div>
-        </div>
-
         <%= render 'shared/show_admin_links', item: @photo %>
 
-        <%= render 'shared/social_buttons' %>
+        <%#= render 'shared/social_buttons' %>
 
         <%= render '/shared/ad_banner' %>
 
       </div>
 
       <!-- TODO: Enable when the layout is correct. Check http://quienmanda.es/photos/287 f.ex.
-      <%= render 'shared/related_posts', related_posts: @photo.related_posts[0..1], wrapper: true, span: 'span6' %>
+      <%= render 'shared/related_posts', related_posts: @photo.related_posts[0..1], wrapper: true, width: 'span6' %>
       -->
 
     </div>
@@ -47,3 +39,6 @@
   </div>
 
 </div>
+
+<%= render 'shared/annotorious', photo: @photo %>
+

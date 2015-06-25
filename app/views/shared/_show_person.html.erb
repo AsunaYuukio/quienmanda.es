@@ -1,31 +1,15 @@
-<div class="<%= (defined? span) ? span : 'span3' %> item people">
-  <%# Put title on top if we are in a mixed wall %>
-  <% if defined? mixed and mixed %>
-  <h3>
-    <%= link_to item.short_or_long_name, person_path(item) %>
-  </h3>
-  <% end %>
+<div class="span3 item people">
   <div class="picture">
-    <% 
-      if defined? show_square_picture and show_square_picture
-        picture = image_tag(item.avatar.url ? item.avatar.url(:square) : 'avatar-square.png')
-      else
-        picture = image_tag(item.avatar.url ? item.avatar.url() : 'avatar.png')
-      end
-    %>
-    <%= link_to picture, person_path(item), class: 'image' %>
+    <%= link_to image_tag(item.avatar.url ? item.avatar.url : 'avatar.png'), 
+                person_path(item), class: 'image' %>
     <div class="description">
-      <% unless defined? mixed and mixed %>
-      <h3>
+     <center> <h4>
         <%= link_to item.short_or_long_name, person_path(item) %>
-      </h3>
-      <% end %>
-
-      <% unless item.description.blank? %>
+      </h4>
       <p>
         <%= item.description %>
       </p>
-      <% end %>
+</center>
       <%= render 'shared/show_admin_links', :item => item %>
     </div>
   </div>  

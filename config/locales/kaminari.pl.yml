@@ -1,0 +1,9 @@
+pl:
+  views:
+    # Kaminari
+    pagination:
+      first: "&laquo; Pierwsza"
+      last: "Ostatnia &raquo;"
+      previous: "&lsaquo; Poprzednia"
+      next: "Następna &rsaquo;"
+      truncate: "..."

@@ -1,20 +1,17 @@
-// We define $j instead of $ to avoid conflict with annotorious.js 
-// (see https://learn.jquery.com/using-jquery-core/avoid-conflicts-other-libraries/)
-$j = jQuery.noConflict();
 
 function NetworkGraph(selector, infobox) {
 
   var _this = this;
 
   // Basic D3.js SVG container setup
-  var width = $j(selector).width(),
-      height = $j(selector).height(),
+  var width = $(selector).width(),
+      height = $(selector).height(),
       centerx = width / 2,
       centery = height / 2,
       linkDistance = height * 0.2,
       isFullscreen = false;
 
-  var category2 = [ "#60A300", "#A9C300" ]; //[ "#CE7A20", "#814607" ];
+  var category2 = [ "#ce7a20", "#4195BC" ];
   var color = d3.scale.ordinal().range(category2).domain([1,2]);
   var infobox = d3.select(infobox);
 
@@ -32,6 +29,13 @@ function NetworkGraph(selector, infobox) {
       .attr("height", height)
       .call(d3.behavior.drag().on("drag", onDrag))
       .append("g");   // Removing this breaks zooming/panning
+      
+  svg.append("image")
+    .attr("xlink:href", "/images/ktorzadzistopka.png")
+    .attr("x", 5)
+    .attr("y", 390)
+    .attr("width", 60)
+    .attr("height", 60);
 
   // Force layout configuration
   var force = d3.layout.force()
@@ -106,8 +110,8 @@ function NetworkGraph(selector, infobox) {
   // Resize visualization
   this.resize = function() {
 
-    width = $j(selector).width();
-    height = $j(selector).height();
+    width = $(selector).width();
+    height = $(selector).height();
     viewport_origin_x = (width * 0.5) - centerx;
     viewport_origin_y = (height * 0.5) - centery;
     linkDistance = height * 0.2;
@@ -138,6 +142,8 @@ function NetworkGraph(selector, infobox) {
     path.enter().append("svg:path")
         .attr("id", function(d){ return 'link-'+d.id; })
         .attr("class", "link")
+        .attr("data-target", function(d) { return d.target.name; })
+        .attr("data-source", function(d) { return d.source.name; })
         .on("mouseover", onLinkMouseOver)
         .on("mouseout", onLinkMouseOut)
         .attr("marker-end", function(d) { return "url(#relation)"; });
@@ -175,20 +181,21 @@ function NetworkGraph(selector, infobox) {
     // the Content Type headers of the request. But the Rails cache is mixing up the 
     // HTML and JSON responses, so the quickest way of fixing that is making sure the
     // request URLs are different.
-    $j.getJSON(url+'.json', function(data) {
-
+    console.log(url);
+    $.getJSON(url+'.json', function(data) {
+      console.log(data);
       // Add the retrieved nodes to the network graph
-      $j.each(data.nodes, function(key, node) {
+      $.each(data.nodes, function(key, node) {
         addNode(node, url, posx, posy);
       });
 
       // Add the retrieved links to the network graph
-      $j.each(data.links, function(key, link) {
+      $.each(data.links, function(key, link) {
         addLink(link);
       });
 
       // Go through the relations of child nodes, looking for relations among them
-      $j.each(data.child_links, function(key, link) {
+      $.each(data.child_links, function(key, link) {
         if ( nodes[link.source] == null ) {
           nodes[link.target]['expandable'] = true;
         } else if ( nodes[link.target] == null ) {
@@ -205,13 +212,13 @@ function NetworkGraph(selector, infobox) {
 
   // Remove related nodes & its links
   function unloadNode(url) {
-    $j.each(nodes, function(key,node) {
+    $.each(nodes, function(key,node) {
       // filter all nodes to get only nodes loadedBy url
       if (node.url !== url && node.url !== nodeRootUrl && node.loadedBy && node.loadedBy.indexOf(url) > -1) {
         // check if node has been loadedBy other nodes
         if (node.loadedBy.length < 2) {
           // Remove links from this node
-          $j.each(links, function(key,link) {
+          $.each(links, function(key,link) {
               if (link.source.url == node.url || link.target.url == node.url){
                 removeLink(link);
               }
@@ -269,7 +276,8 @@ function NetworkGraph(selector, infobox) {
       .attr("y", -8)
       .attr("class", "expand-icon")
       .attr("width", 16)
-      .attr("height", 16);
+      .attr("height", 16)
+      .attr("class","plus");
   }
 
   // Get the node class (root|expandable|expanded)
@@ -335,15 +343,32 @@ function NetworkGraph(selector, infobox) {
   // Node click handler
   function onNodeClick(d) {
     if (d3.event.defaultPrevented) return;  // click suppressed
+    
+    if($(this).attr('selectable')){
+      $(this).removeAttr('selectable');
+      $(this).attr('selected', true);
+      $(this).css('opacity','1');
+      $(this).css('font-weight','bold');
+      $('path').each(function(path){
+        var src = $('text:contains('+$(this).data('source') + ')').parent().attr('selected');
+        var tar = $('text:contains('+$(this).data('target') + ')').parent().attr('selected');
+        console.log(src);
+        console.log(tar);
+        if(src == 'selected' && tar == 'selected'){
+          $(this).css('opacity','1');
+        }
+      })
+    }
   
     // Check if expand or contract
-    if ( d['expandable'] ) {
+    else if ( d['expandable'] ) {
       d['expandable'] = false;                // Not anymore expandable
       d['expanded'] = true;                   // Expanded
       d3.select( d3.event.target.parentNode ) // Update class & change image icon (less)
         .attr('class', getNodeClass)
         .select('image')
-          .attr("xlink:href", "/img/less-sign.png");
+          .attr("xlink:href", "/img/less-sign.png")
+          .attr("class","minus");
       d.fixed = true;                         // Fix after 'exploding', feels better
       loadNode(d.url, d.x, d.y);        // add linked nodes
 
@@ -353,7 +378,8 @@ function NetworkGraph(selector, infobox) {
       d3.select( d3.event.target.parentNode ) // Update class & change image icon (plus)
         .attr('class', getNodeClass)
         .select('image')
-          .attr("xlink:href", "/img/plus-sign.png");
+          .attr("xlink:href", "/img/plus-sign.png")
+          .attr("class","plus");
       d.fixed = false;
       unloadNode(d.url);                      // remove linked nodes
     }
@@ -438,7 +464,7 @@ function NetworkGraph(selector, infobox) {
       top: 'auto', // Top position relative to parent in px
       left: 'auto' // Left position relative to parent in px
     };
-    return new Spinner(opts).spin($j(selector)[0]);
+    return new Spinner(opts).spin($(selector)[0]);
   }
 
   // Force layout iteration

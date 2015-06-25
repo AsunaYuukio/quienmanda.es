@@ -64,20 +64,17 @@ gem 'font-awesome-rails', "~> 3.2.1.2"  # Force version change after CDN cache i
 gem 'unicode_utils'
 gem 'rails-i18n', '~> 4.0.0.pre'
 gem 'nokogiri'
-gem 'acts_as_votable', '~> 0.10.0'
-
-# Users login
-gem 'omniauth'
-gem 'omniauth-twitter'
+gem 'disqus_rails'
 
 # Admin interface
 gem 'rails_admin'
 gem 'rails_admin_toggleable'
 gem 'rails_admin_tag_list'
 gem 'ckeditor_rails'
-gem 'paper_trail', '~> 4.0.0.beta'
+gem 'paper_trail', github: 'airblade/paper_trail', branch: 'rails4'
 gem 'charlock_holmes_bundle_icu'
 gem 'fuzzy_match'
+gem 'polskie_stringi'
 
 # Picture upload and handling
 gem 'mini_magick'
@@ -86,10 +83,14 @@ gem 'fog'
 
 # Testing
 group :development, :test do
-  gem 'pry-rails', :group => :development
+  gem 'pry-rails'
   gem 'rspec-rails'
   gem 'factory_girl_rails'
   gem 'coveralls', require: false
+end
+
+group :test do
+  gem 'webmock'
 end
 
 # Performance and profiling
@@ -100,9 +101,19 @@ gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
 group :profile do
-  gem 'ruby-prof'
+  #gem 'ruby-prof'
 end
 
 # Fix cross-domain fonts when using Firefox and a CDN
 # See https://discussion.heroku.com/t/fontawesome-doesnt-load-on-firefox-because-of-cors-configuration-issue/35/10
 gem 'font_assets'
+
+#gem 'will_paginate'
+
+group :development do
+  gem 'capistrano-rails'
+  gem 'capistrano-rvm'
+  gem 'capistrano3-unicorn'
+end
+
+gem 'whenever', :require => false

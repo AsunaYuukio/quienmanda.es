@@ -12,7 +12,8 @@
  *= require bootstrap.min.css
  *= require bootstrap-responsive.min.css
  *= require font-awesome
- *= require main
+ *= require style
+ *= require custom
  *= require_directory ./annotorious
  *= require_directory .
  */

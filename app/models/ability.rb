@@ -14,7 +14,6 @@ class Ability
       can :read, Post, published: true
       can :read, Entity, published: true
       can :read, Photo, published: true
-      can :read, Topic, published: true
     end
     
     # Define abilities for the passed in user here. For example:

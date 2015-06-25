@@ -6,7 +6,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations
   # GET /organizations.json
   def index
-    @title = 'Organizaciones'
+    @title = 'Organizacje'
     @organizations = (can? :manage, Entity) ? Entity.organizations : Entity.organizations.published
     if stale?(last_modified: @organizations.maximum(:updated_at), :public => current_user.nil?)
       @organizations = @organizations.order("updated_at DESC").page(params[:page]).per(12)
@@ -19,15 +19,19 @@ class OrganizationsController < ApplicationController
     authorize! :read, @organization
     if stale?(@organization, :public => current_user.nil?)
       @title = @organization.short_or_long_name
-      @relations = (can? :manage, Entity) ? @organization.relations : @organization.relations.published
+      @relations = []
+      if(can? :manage, Entity)
+        @organization.relations
+      else
+        @organization.relations.published.map{|e| if e.target.published && e.source.published then @relations.push e end}
+      end
+
+      embed_url = url_for controller: 'relation_visualizations', action: 'show', id: @organization.slug
+      @embed = "<iframe width='600' height='475' src='#{embed_url}'></iframe>"
 
       # Facebook Open Graph metadata
       @fb_description = @organization.description unless @organization.description.blank?
       @fb_image_url = @organization.avatar.url() unless @organization.avatar.nil?
-
-      # Twitter Summary Card metadata
-      @tw_card_summary = @fb_description
-      @tw_card_photo = @fb_image_url
     end
   end
 

@@ -1,30 +1,41 @@
 <!-- start: Page Title -->
 <div class="row-fluid">
-<div id="page-title" class="centered">
+<div id="page-title" class="span6 offset3">
+
   <h2>Log in to your account</h2>
+
 </div>
 </div>
 <!-- end: Page Title -->
 
 <!--start: Wrapper-->
 <div class="row-fluid">
-<div id="wrapper" class="full login-container lr-page span4 offset4">
+<div id="wrapper" class="full lr-page span4 offset4">
   
   <!-- start: Row -->
   <div class="row-fluid">
     
     <div id="login-form" class="span12">
+      
       <div class="page-title-small">
+
         <h3>use your account</h3>
+
       </div>
 
-      <a href="<%= user_omniauth_authorize_path(:twitter) %>" class="twitter_connect">
+      <a href="" class="facebook_connect">
+        <div class="img"><i class="icon-facebook"></i></div>
+        <div class="text">Login with Facebook</div>
+      </a>
+      <a href="" class="twitter_connect">
         <div class="img"><i class="icon-twitter"></i></div>
-        <div class="text">Sign in with Twitter</div>
+        <div class="text">Login with Twitter</div>
       </a>
       
       <div class="page-title-small">
-        <h3>or</h3>
+
+        <h3 style="background:#f0f0f0">or</h3>
+
       </div>
       
       <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>

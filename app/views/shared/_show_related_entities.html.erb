@@ -5,15 +5,21 @@
 
   <% if defined?(photo_navigation) %>
   <div class="related-entities-navigation">
-    <%= link_to "Anterior", previous_photo_path(@photo), class: "left" %>
-    <p>Anterior/Siguiente foto</p>
-    <%= link_to "Siguiente", next_photo_path(@photo), class: "right" %>
+    <%= link_to "Wcześniejsze", previous_photo_path(@photo), class: "left" %>
+    <p>Wcześniejsze/Następne zdjęcie</p>
+    <%= link_to "Następne", next_photo_path(@photo), class: "right" %>
   </div>  
   <% end %>
 
   <div class="related-entities">
 
-    <h3>Protagonistas</h3>
+    <h3>
+      <% if defined?(post)%>
+        W artykule
+      <% else %>
+        Na zdjęciu
+      <% end %>
+      </h3>
 
     <ul>
       <% entities.each_with_index do |entity, i| %>
@@ -28,9 +34,9 @@
         </div>
         <div class="content">
           <% if entity.person? %>
-          <%= link_to entity.short_or_long_name, person_path(entity) %>
+          <%= link_to entity.short_or_long_name, person_path(entity), style: "color: #FFF;"%>
           <% else %>
-          <%= link_to entity.short_or_long_name, organization_path(entity) %>
+          <%= link_to entity.short_or_long_name, organization_path(entity), style: "color: #FFF;" %>
           <% end %>
           <small><%= entity.description %></small>
         </div>
@@ -41,7 +47,7 @@
   </div>
 
   <span id="related-entities-toggle" class="label toggable">
-    <i class="icon-chevron-down"></i> Mostrar todos
+    <i class="icon-chevron-down"></i> Pokaż wszystko
   </span> 
 </div>
 <% end %>

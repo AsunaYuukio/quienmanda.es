@@ -1,0 +1,74 @@
+{
+  "object": {
+    "global_id": "4032586",
+    "dataset": "krs_osoby",
+    "id": "1",
+    "slug": "agnieszka-dorota",
+    "score": 1,
+    "data": {
+      "krs_osoby.liczba_nadzorcow": 1,
+      "krs_osoby.nazwisko": "Sikorska",
+      "krs_osoby.liczba_akcjonariusze": 0,
+      "krs_osoby.liczba_reprezentanci": 3,
+      "krs_osoby.id": "1",
+      "krs_osoby.str": "PREZES ZARZ\u0104DU w <a href=\"\/dane\/krs_podmioty\/220846\">MARPOL<\/a><br\/>PREZES w <a href=\"\/dane\/krs_podmioty\/391681\">LERG-CHEM<\/a><br\/>WICEPREZES w <a href=\"\/dane\/krs_podmioty\/33727\">LERG<\/a><br\/>Wsp\u00f3lnik w <a href=\"\/dane\/krs_podmioty\/391681\">LERG-CHEM<\/a><br\/>Cz\u0142onek organu nadzoru w <a href=\"\/dane\/krs_podmioty\/70497\">ZAK\u0141AD SUROWC\u00d3W CHEMICZNYCH I MINERALNYCH \"PIOTROWICE II\"<\/a>",
+      "krs_osoby.privacy": "0",
+      "krs_osoby.liczba_zalozyciele": 0,
+      "krs_osoby.plec": "K",
+      "krs_osoby.imie_drugie": "Dorota",
+      "krs_osoby.imie_pierwsze": "Agnieszka",
+      "krs_osoby.data_urodzenia": "1976-01-30",
+      "krs_osoby.liczba_wspolnicy": 1,
+      "krs_osoby.imiona": "Agnieszka Dorota"
+    },
+    "_id": "http:\/\/api.mojepanstwo.pl\/krs\/osoby\/1",
+    "_mpurl": "http:\/\/mojepanstwo.pl\/dane\/krs_osoby\/1",
+    "layers": {
+      "powiazania": null,
+      "organizacje": [{
+        "id": "1",
+        "nazwa": "M.A.D.",
+        "forma_prawna_str": "SP\u00d3\u0141KA AKCYJNA",
+        "data_rejestracji": "2004-11-02",
+        "kapital_zakladowy": "1167500.00",
+        "wykreslony": "0",
+        "adres_miejscowosc": "Ignatki",
+        "role": [{
+          "key": "reprezentanci",
+          "params": {
+            "id": "930899",
+            "funkcja": "PREZES ZARZ\u0104DU",
+            "funkcja_id": "1"
+          },
+          "label": "Prezes Zarz\u0105du"
+        }]
+      }, {
+        "id": "2",
+        "nazwa": "LERG-CHEM",
+        "forma_prawna_str": "SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104",
+        "data_rejestracji": "2011-08-19",
+        "kapital_zakladowy": "170650.00",
+        "wykreslony": "0",
+        "adres_miejscowosc": "Pustk\u00f3w-osiedle",
+        "role": [{
+          "key": "reprezentanci",
+          "params": {
+            "id": "655239",
+            "funkcja": "PREZES",
+            "funkcja_id": "3"
+          },
+          "label": "Prezes"
+        }, {
+          "key": "wspolnicy",
+          "params": {
+            "id": "399673",
+            "subtitle": "374 UDZIA\u0141Y W WYSOKO\u015aCI 18.700 Z\u0141"
+          },
+          "label": "Wsp\u00f3lnik"
+        }]
+      }],
+      "graph": null,
+      "dataset": null
+    }
+  }
+}

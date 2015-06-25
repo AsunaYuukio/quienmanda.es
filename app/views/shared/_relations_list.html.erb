@@ -1,50 +1,50 @@
 <% if !list.nil? and list.size > 0 %>
 <span id="relations-table-toggle" class="label toggable active" data-toggle="collapse" data-target="#relations-list">
-  <span class="show-active"><i class="icon-chevron-up"></i> Ocultar tabla de relaciones...</span>
-  <span class="show-inactive"><i class="icon-chevron-down"></i> Mostrar tabla de relaciones...</span>
+  <span class="show-active"><i class="icon-chevron-up"></i> Ukryj tabelę relacji</span>
+  <span class="show-inactive"><i class="icon-chevron-down"></i> Pokaż tabelę relacji</span>
 </span>
 <div id="relations-list" class="collapse in">
   <table class="table footable table-striped">
     <thead>
       <tr>
-        <th>nombre</th>
-        <th>relación</th>
-        <th>nombre</th>
-        <th data-sort="false">fuente</th>
-        <th data-hide="phone,tablet">desde</th>
-        <th data-hide="phone,tablet">hasta</th>
-        <th data-hide="phone,tablet">en</th>
+        <th data-sort-initial="true">nazwa</th>
+        <th>relacja</th>
+        <th>nazwa</th>
+        <th data-sort="false">źródło</th>
+        <th data-hide="phone,tablet">od</th>
+        <th data-hide="phone,tablet">do</th>
+        <th data-hide="phone,tablet">w</th>
       </tr>
     </thead>
 
     <tbody>
       <% list.each do |relation| %>
-        <% if relation.source.id == item.id %>
-        <tr class="self">
-        <% else %>
-        <tr>
-        <% end %>
-          <td>
-          <% if can? :manage, Relation %>
-            <%= link_to raw('<span class="label"><i class="icon-edit"></i></span>'),
-                        rails_admin.edit_path(id: relation.id, model_name: relation.class.name), 
-                        target: '_blank' %>
-          <% end %>
-            <%= link_to relation.source.short_or_long_name, 
-                        relation.source.person ? person_path(relation.source) : organization_path(relation.source) %>
-          </td>
-          <td><%= relation.relation_type.description %></td>
-          <td><%= link_to relation.target.short_or_long_name, 
-                        relation.target.person ? person_path(relation.target) : organization_path(relation.target) %></td>
-          <td>
-            <% relation.sources.each do |source| %>
-              <%= display_source source %>
+        <% if relation.target && relation.source %>
+          <tr>
+            <td>
+            <% if can? :manage, Relation %>
+              <%= link_to raw('<span class="label"><i class="icon-edit"></i></span>'),
+                          rails_admin.edit_path(id: relation.id, model_name: relation.class.name), 
+                          target: '_blank' %>
             <% end %>
-          </td>
-          <td><%= relation.from %></td>
-          <td><%= relation.to %></td>
-          <td><%= relation.at %></td>
-        </tr>
+              <%= link_to relation.source.short_or_long_name, 
+                          relation.source.person ? person_path(relation.source) : organization_path(relation.source) %>
+            </td>
+            <td><%= relation.relation_type.description %></td>
+            <td>
+              <%= link_to relation.target.short_or_long_name, 
+                          relation.target.person ? person_path(relation.target) : organization_path(relation.target) %>
+            </td>
+            <td>
+              <% relation.sources.each do |source| %>
+                <%= display_source source %>
+              <% end %>
+            </td>
+            <td><%= relation.from %></td>
+            <td><%= relation.to %></td>
+            <td><%= relation.at %></td>
+          </tr>
+        <% end %>
       <% end %>
     </tbody>
   </table>

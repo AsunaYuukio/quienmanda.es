@@ -1,0 +1,15 @@
+{
+    "search": {
+        "pagination": {
+            "count": 0,
+            "total": 0,
+            "from": 1,
+            "to": 0
+        },
+        "performance": {
+            "took": 2
+        },
+        "dataobjects": [],
+        "didyoumean": false
+    }
+}

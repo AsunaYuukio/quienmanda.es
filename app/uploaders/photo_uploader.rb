@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 class PhotoUploader < CarrierWave::Uploader::Base
 
   include CarrierWave::MiniMagick
@@ -16,7 +14,7 @@ class PhotoUploader < CarrierWave::Uploader::Base
   end
   version :full do
     # Unlimited height to let the picture flow freely in height
-    process :resize_to_limit => [600, 10000]
+    process :resize_to_limit => [1200, 10000]
   end
 
   # Add a white list of extensions which are allowed to be uploaded.

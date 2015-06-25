@@ -4,35 +4,46 @@
 
       <!-- start: About -->
       <div class="span5 about">
+
         <div class="logos">
-          <p class="title">Un proyecto de</p>
-          <a href="http://www.civio.es" class="logo" title="Civio" target="_blank">
-            <%= image_tag("/images/logo-civio.png") %>
+          <p class="title">Serwis</p>
+          <a href="http://media30.pl/" class="logo" title="Fundacja Media 3.0" target="_blank">
+            <img alt="Logo Media 3.0" src="/img/partnerzy/logoGOTOWEbiale.png" />
           </a>
         </div>
+
         <div class="logos">
-          <p class="title">con la ayuda de</p>
-          <a href="http://www.globalintegrity.org/" class="partner" title="Global Integrity" target="_blank">
-            <%= image_tag("/images/logo-gi.png", width: '160px') %>
+          <p class="title">w partnerstwie</p>
+          <a href="http://civio.es/" class="logo" title="Fundacja Civio" target="_blank">
+            <img alt="Logo civio" src="/img/partnerzy/logo-civio.png" />
           </a>
-          <a href="http://sunlightfoundation.com/" class="partner" title="Sunlight Foundation" target="_blank">
-            <%= image_tag("/images/logo-sunlight.png", width: '90px') %>
+		      <a href="http://www.batory.org.pl/" class="logo" title="Fundacja Batorego" target="_blank">
+            <img alt="Logo batory" src="/img/partnerzy/logo_Batory.png" />
+          </a>
+		      <a href="http://epf.org.pl/pl/" class="logo" title="Fundacja ePaństwo" target="_blank">
+            <img alt="Logo ePaństwo" src="/img/partnerzy/logo_fundacja.png" />
+          </a>
+          <a href="https://przeswietl.pl/" class="logo" title="Serwis przeswietl.pl" target="_blank">
+            <img alt="Logo Prześwietl.pl" src="/img/partnerzy/przeswietl.png" />
           </a>
         </div>
+
         <div class="social">
           <ul>
-            <li><a href="https://twitter.com/quien_manda" class="social-twitter" title="Twitter" target="_blank"></a></li>
-            <li><a href="http://facebook.com/fundacioncivio" class="social-facebook" title="Facebook" target="_blank"></a></li>
+            <li><a href="https://twitter.com/ktorzadzi" class="social-twitter" title="Twitter" target="_blank"></a></li>
+            <li><a href="https://www.facebook.com/pages/Kto-Rz%C4%85dzi/407054199454801" class="social-facebook" title="Facebook" target="_blank"></a></li>
             <!-- TODO: Put back once we have a RSS feed
             <li><a href="http://www.civio.es/feed/" class="social-rss" title="RSS" target="_blank"></a></li>
             -->
           </ul>
-          <form target="_blank" class="validate" name="mc-embedded-subscribe-form" id="mc-embedded-subscribe-form" method="post" action="http://civio.us4.list-manage1.com/subscribe/post?u=9416fe6b76f2c3f985c1f8e0f&amp;id=9d5b4c8cda">         
-            <input id="mce-EMAIL" class="email" type="email" required="" placeholder="correo" name="EMAIL" value="SUSCRÍBETE AL BOLETÍN" style="border: none;">
-            <button type="submit" class="btn btn-submit">Enviar</button>
-          </form>
+          <%
+         # <form target="_blank" class="validate" name="mc-embedded-subscribe-form" id="mc-embedded-subscribe-form" method="post" action="http://civio.us4.list-manage1.com/subscribe/post?u=9416fe6b76f2c3f985c1f8e0f&amp;id=9d5b4c8cda">
+         #   <input id="mce-EMAIL" class="email" type="email" required="" placeholder="correo" name="EMAIL" value="ZAPISZ SIĘ DO NEWSLETTERA" style="border: none;">
+         #   <button type="submit" class="btn btn-submit">Wyślij</button>
+         # </form>
+         %>
         </div>
-        <div class="contact"><a href="mailto:contacto@civio.es" class="contact">contacto<span class="arroba">@</span>civio.es</a></div>
+        <div class="contact"><a href="mailto:ktorzadzi@media30.pl" class="contact">ktorzadzi@media30.pl</a> //</div>
       </div>
       <!-- end: About -->
 
@@ -40,13 +51,19 @@
       </div>
 
       <div class="span5 links">
-        <h3>Quién Manda</h3>
-        <p><a href="/posts/pero-que-es-esto#porque">¿Por qué hacemos esto?</a></p>
-        <p><a href="/posts/pero-que-es-esto#quienes">Agradecimientos</a></p>
-        <p><a href="/posts/pero-que-es-esto#legales">Términos legales</a></p>
-        <p><%= link_to 'Log In', '/login' %></p>
+        <h3>Kto rządzi</h3>
+        <p><a href="/posts/ktorzadzi#dlaczego-to-robimy">¿Dlaczego to robimy?</a></p>
+        <p><a href="/posts/ktorzadzi#kto-za-tym-stoi">Partnerzy</a></p>
+        <p><a href="/posts/ktorzadzi#prawa-autorskie">Prawa autorskie</a></p>
+        <!-- <p><%= link_to 'Log In', user_session_path %></p> -->
+        <p><%= link_to 'Administracja', rails_admin_path %></p>
       </div>
 
     </div>
   </div>
+</div>
+
+<div id="footer-even-more">
+  <p>Projekt realizowany w ramach programu Obywatele dla Demokracji, finansowanego z Funduszy EOG</p>
+  <img alt="EOG" src="/images/grant_transparent.png" />
 </div>

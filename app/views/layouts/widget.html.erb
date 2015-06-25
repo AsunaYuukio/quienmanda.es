@@ -1,19 +1,16 @@
-<!DOCTYPE html>
 <html>
 <head>
   <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
   <%= stylesheet_link_tag "/css/annotorious.css" %>
   <style>
-    html { -webkit-text-size-adjust: none; /* prevent font scaling in landscape */ }
     body {
-      margin: 0;
-      padding: 0;
       color: #242424;
       font-size: 14px;
       font-family: 'Helvetica Neue', Arial, sans-serif;
     }
     .picture {
-      padding: 10px;
+      border: 3px;
+      padding: 10px 10px 0px 10px;
     }
     a {
       text-decoration: none;
@@ -22,49 +19,28 @@
     a:hover {
       text-decoration: underline;
     }
-    .credits{
-      margin-bottom: 1em;
-    }
-    .photo-external-link{
-      color: #8aa304;
-    }
-    .photo-external-link:hover{
-      color: black;
-      text-decoration: none;
-    }
-    .annotorious-annotationlayer{
-      width: 100%;
-    }
-    .annotorious-popup{
-      -webkit-border-radius: 0;  
-      -moz-border-radius: 0;
-      border-radius: 0;
-    }
-    .annotorious-popup-text a{
-      color: #6bb21b;
-      font-size: 1.125em;
-      font-weight: bold;
-      padding-bottom: 6px;
-    }
-    .annotorious-popup-text p{
-      margin: 5px 0 0;
-    }
   </style>
 </head>
-<body>
-  <div class="picture">
-    <%= image_tag(@photo.file.url(:full), width: '100%', id: 'photo', class: 'photo annotatable', :data => { :photoid => @photo.id, :readonly => (can? :manage, @photo) ? 'false' : 'true' }) %>
+<body onload="adjustIFrameHeight();">
+  <div class="span6 item">
+    <div class="picture">
+      <%= image_tag(@photo.file.url(:full), width: '100%', id: 'photo', class: 'photo annotatable') %>
 
-    <%= render 'shared/photo_footer', photo: @photo %>
-
-    <%= render 'shared/show_photo_credit', photo: @photo %>
-
-    <%= link_to @photo, class: 'photo-external-link', target: '_blank' do %>
-      Ver la imagen en el Fotomandón <i class="icon-chevron-right"></i>
-    <% end %>
+      <%= render 'shared/photo_footer', photo: @photo, external_link: true %>
+    </div>  
   </div>
 
-  <%= javascript_include_tag "widget/widget_20140326", "data-turbolinks-track" => true %>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <%= javascript_include_tag "/javascripts/jquery.imagesloaded.js" %>
+  <%= render 'shared/annotorious', photo: @photo %>
+
+  <script>
+  // http://stackoverflow.com/questions/153152/resizing-an-iframe-based-on-content
+  function adjustIFrameHeight() {
+    parent.postMessage({id: '<%= @photo.id %>', height: document.body.scrollHeight}, "*");
+    //* allows this to post to any parent iframe regardless of domain
+  }
+  </script>
 
 </body>
 </html>

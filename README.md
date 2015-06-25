@@ -1,44 +1,126 @@
 quienmanda.es
-=============
+
+test
 
 [![Build Status](https://travis-ci.org/civio/quienmanda.es.png)](https://travis-ci.org/civio/quienmanda.es)
 [![Coverage Status](https://coveralls.io/repos/civio/quienmanda.es/badge.png?branch=master)](https://coveralls.io/r/civio/quienmanda.es?branch=master)
 [![Code Climate](https://codeclimate.com/github/civio/quienmanda.es.png)](https://codeclimate.com/github/civio/quienmanda.es)
 [![Dependency Status](https://gemnasium.com/civio/quienmanda.es.png)](https://gemnasium.com/civio/quienmanda.es)
-[![Stories in Ready](https://badge.waffle.io/civio/quienmanda.es.svg?label=ready&title=Ready)](http://waffle.io/civio/quienmanda.es)
 
-Quién Manda is a map of power relations in Spain, combining network visualizations, investigative journalism articles and annotated photos. The code is stable and has been [live](http://quienmanda.es) since October 2013, but some important features are still missing:
+### Install locally
 
- * Embeddable content: sharing annotated photos, network charts and entity profiles in other sites.
+Ruby 2.0 needed. You can install it using RVM:
  
- * Richer network visualization: different relation/node types, improved look and feel and UX...
+    $ rvm get stable
+    $ rvm install 2.0.0
+    
+Postgres is used for the database. We use the `hstore` datatypes, so 9.0 is required. If developing in OS X Postgres.app is the easiest way to get Postgres installed. Then create a user `qm` and the database:
  
- * Chart editor: create your own shareable custom graph, with selected nodes and relations.
+    $ createuser -s -h localhost qm
+    $ createdb -O qm -h localhost qm_development
+    $ createdb -O qm -h localhost qm_test
+
+Then install and run locally, get a copy of the code, install the dependencies:
  
- * REST API: read API giving access to all information in the database.
+    $ git clone https://github.com/civio/quienmanda.es.git
+    $ cd quienmanda.es
+    $ bundle install
 
- * User generated content: voting, crowdsourced data and photo collection, and moderation features.
+We keep "sensitive parameters" in a local file `config/application.yml` outside of version control. Make a copy of `config/application.yml-example` into `config/application.yml`; for a local deployment you don't need to modify the settings.
 
- * Data: automated bulk data import/updates from official sources.
+Set up the database (this will also create some sample data, and a user with email `admin@quienmanda.es` and password `password`):
 
-### Currently working on...
+    $ bundle exec rake db:setup
 
-We're testing a [Waffle.io board](https://waffle.io/civio/quienmanda.es) to show which issues we're working on at the moment: we select a coherent set of issues from Backlog and move them into the 'Next milestone' column; once all the issues move to the Done column we go back to the Backlog and repeat the process. We aim to have a series of meaningful milestones (or iterations) forming a sensible high-level roadmap (but if this doesn't work we'll try something else).
+Run the tests:
 
-We try to write issues that can be understood by newcomers, but this is not always easy, so if you don't understand something please ask. We've also started tagging the issues along functional areas.
+    $ bundle exec rake
 
-### Collaborate
+And then run the application:
 
-We plan to have regular hack meetings (in Madrid, potentially also online) over 2015 in order to help people get started with the code. The idea is to meet for a few hours, scrape some data, fix some existing issues and/or hack some new feature (like embeddable content, a network graph editor or improving the network visualization). This will be discussed in the [civio-dev mailing list](https://groups.google.com/forum/#!forum/civio-dev).
+    $ bundle exec rails server
 
-### Setting it up
+### Deploying in Heroku
 
-See [INSTALL.md](INSTALL.md) for detailed setup instructions.
+There is a nice guide [here][1], but basically start by creating the app:
+ 
+    $ heroku apps:create
+    $ heroku addons:add memcachier
 
-### Using production content in your local environment
+[1]: https://devcenter.heroku.com/articles/rails4-getting-started
 
-You can develop locally using some fake content created by `rake db:seed`. But it may be useful to work on a copy of the production database, with full-length articles and a fully-populated relation database. We're now looking into what's the best way of exporting the whole production database and making it available for download. 
+In production uploaded pictures are stored in S3, so you will need to provide your AWS credentials, which we handle safely using the Figaro gem. Edit `config/application.yml` and then, to set the env variables in Heroku, run:
 
-Two open questions: 
- * how can we edit the database dump to remove user account data? and,
- * how do we handle images, which are stored in S3 in production?
+    $ rake figaro:heroku
+
+(Or, if you have multiple Heroku apps in the same folder, do `rake figaro:heroku[myapp]`.)
+
+You can now deploy and start the app:
+
+    $ git push heroku master
+    $ heroku run rake db:setup
+
+    $ heroku apps:open
+
+To back up the Heroku database contents, [see][2]:
+
+    $ heroku addons:add pgbackups
+    $ heroku pgbackups:capture
+    $ heroku pgbackups                          # show backups done
+    
+Set up a daily auto-backup by enabling the add-on:
+
+    $ heroku addons:add pgbackups:auto-month
+
+[2]: https://devcenter.heroku.com/articles/pgbackups
+
+### Tools used
+
+ * Ruby 2.0 / Rails 4.0 / Rspec
+ * [Devise](https://github.com/plataformatec/devise): authentication
+ * [CanCan](https://github.com/ryanb/cancan): authorization
+ * [StringEx](https://github.com/rsl/stringex): friendly URLs
+ * [RailsAdmin](https://github.com/sferik/rails_admin): the admin panel
+ * [Kaminari](https://github.com/amatsuda/kaminari): pagination
+ * [pg_search](https://github.com/casecommons/pg_search): full text search (Postgres)
+ * [Carrierwave](https://github.com/carrierwaveuploader/carrierwave) + [Fog](https://github.com/fog/fog): imageuploads
+ * [PaperTrail](https://github.com/airblade/paper_trail): version control
+ * [CKEditor](https://github.com/tsechingho/ckeditor-rails): rich-content editor
+ * [ActsAsTaggableOn](https://github.com/mbleigh/acts-as-taggable-on): tags
+ * NewRelic: performance monitoring
+ * [Shortcode](https://github.com/carnesmedia/shortcodes)
+ * [fuzzy_match](https://github.com/seamusabshere/fuzzy_match)
+
+Additionally, when deploying to production, we use rack-cache and Memcachier.
+ 
+### Transferring database from production to local
+
+Following [Heroku instructions][3]:
+
+    $ heroku pgbackups:capture
+    $ curl -o latest.dump `heroku pgbackups:url`
+    $ pg_restore --verbose --clean --no-acl --no-owner -h localhost -U qm -d qm_development latest.dump 
+
+You may want to add `FORCE_S3_IN_DEV: false` to `config/application.yml` or the uploaded pictures won't show up, since by default the app uses local storage for development.
+ 
+[3]: https://devcenter.heroku.com/articles/heroku-postgres-import-export
+
+### Importing data via CSV uploads
+
+Entities and relations among them can be created automatically by uploading Facts via a CSV file. The file to import must:
+
+ * Have a title row. The values of the fields in this row will be used as column names.
+ * Contain at least three columns: 'source', 'role' and 'target'. Additional columns will be imported as additional attributes of the Fact.
+ * If attributes 'from', 'to' or 'at' exist, they will be added as date attributes in the new relation.
+ * The 'via' attribute is special too: it will be shown as the source of the information when displaying the relation.
+
+NOTE: If generating the CSV file from Excel, be careful with the character encoding. The application will try to guess the encoding of the uploaded file (using Charlock Holmes), but it may not always guess right and misread some accented characters. If you don't know how to set the encoding manually to UTF8 (using for example TextMate), try at least to save in Excel as "Windows Comma Separated Values", it seems to make detection by Charlock Holmes more accurate.
+
+The process has two steps: the upload will create a number of Fact objects, containing all the source data. Once the data is in the database, Facts are 'processed' to match them against existing entities (or new ones that will be created if needed).
+
+Steps are as follows:
+
+1. Go to the Import page vía the Admin panel, and select the CSV file to import.
+1. Clicking 'Upload' will parse the CSV file and create a Fact in the database for each row in the source file. The uploader checks a Fact does not already exist before creating (using source-role-target as the key), so uploading one file again and again is safe, i.e. the uploading is idempotent. (Note: existing Facts are not modified, so changes in fields outside the primary key will be ignored.)
+1. After a successful upload, a results summary page will be shown, listing the uploaded facts, and showing which ones were already known and were thus ignored.
+1. Once the file is uploaded, facts need to be processed: this can be done either from the main Import page, or from the upload results page. New entities and relations are created at this point (after the dry run results are reviewed and approved by the user).

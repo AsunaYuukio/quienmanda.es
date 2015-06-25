@@ -18,14 +18,12 @@ class Post < ActiveRecord::Base
     slug
   end
 
-  acts_as_taggable
-
   validates :title, presence: true, uniqueness: true
   validates :author, presence: true
 
   scope :published, -> { where(published: true) }
 
-  before_save :update_mentions
+  #before_save :update_mentions
 
   def update_mentions()
     Rails.application.routes.url_helpers.tap do |router|

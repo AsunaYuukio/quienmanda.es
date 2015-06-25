@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150424111241) do
+ActiveRecord::Schema.define(version: 20150505172429) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,6 +50,16 @@ ActiveRecord::Schema.define(version: 20150424111241) do
     t.string   "web_page"
     t.string   "open_corporates_page"
     t.string   "youtube_page"
+    t.date     "birth_date"
+    t.string   "occupation"
+    t.integer  "attendance"
+    t.string   "club_name"
+    t.string   "pesel"
+    t.datetime "imported_at"
+    t.string   "krs"
+    t.string   "nip"
+    t.string   "regon"
+    t.boolean  "is_order"
   end
 
   add_index "entities", ["person"], name: "index_entities_on_person", using: :btree
@@ -71,6 +81,15 @@ ActiveRecord::Schema.define(version: 20150424111241) do
   add_index "facts_relations", ["fact_id"], name: "index_facts_relations_on_fact_id", using: :btree
   add_index "facts_relations", ["relation_id"], name: "index_facts_relations_on_relation_id", using: :btree
 
+  create_table "import_blacklists", force: true do |t|
+    t.string   "object_type"
+    t.string   "object_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "import_blacklists", ["object_type", "object_name"], name: "index_import_blacklists_on_object_type_and_object_name", unique: true, using: :btree
+
   create_table "mentions", force: true do |t|
     t.integer "post_id"
     t.integer "mentionee_id"
@@ -79,6 +98,102 @@ ActiveRecord::Schema.define(version: 20150424111241) do
 
   add_index "mentions", ["mentionee_id", "mentionee_type"], name: "index_mentions_on_mentionee_id_and_mentionee_type", using: :btree
   add_index "mentions", ["post_id"], name: "index_mentions_on_post_id", using: :btree
+
+  create_table "mojepanstwo_pl_deputies", force: true do |t|
+    t.string   "_id"
+    t.string   "_mpurl"
+    t.boolean  "mandat_wygasl",                null: false
+    t.string   "sejm_kluby_nazwa", limit: 128
+    t.string   "sejm_kluby_skrot", limit: 32
+    t.string   "imie_pierwsze",    limit: 64,  null: false
+    t.string   "imie_drugie",      limit: 64
+    t.string   "nazwisko",         limit: 64,  null: false
+    t.string   "plec",             limit: 1
+    t.integer  "krs_osoba_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.date     "data_urodzenia"
+    t.integer  "frekwencja"
+    t.string   "zawod"
+  end
+
+  add_index "mojepanstwo_pl_deputies", ["_id"], name: "index_mojepanstwo_pl_deputies_on__id", unique: true, using: :btree
+  add_index "mojepanstwo_pl_deputies", ["_mpurl"], name: "index_mojepanstwo_pl_deputies_on__mpurl", unique: true, using: :btree
+
+  create_table "mojepanstwo_pl_krs_organizations", force: true do |t|
+    t.string   "_id"
+    t.string   "_mpurl"
+    t.string   "nazwa"
+    t.integer  "krs"
+    t.integer  "entity_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mojepanstwo_pl_krs_organizations", ["_id"], name: "index_mojepanstwo_pl_krs_organizations_on__id", unique: true, using: :btree
+  add_index "mojepanstwo_pl_krs_organizations", ["_mpurl"], name: "index_mojepanstwo_pl_krs_organizations_on__mpurl", unique: true, using: :btree
+  add_index "mojepanstwo_pl_krs_organizations", ["entity_id"], name: "index_mojepanstwo_pl_krs_organizations_on_entity_id", using: :btree
+  add_index "mojepanstwo_pl_krs_organizations", ["krs"], name: "index_mojepanstwo_pl_krs_organizations_on_krs", unique: true, using: :btree
+
+  create_table "mojepanstwo_pl_krs_people", force: true do |t|
+    t.string   "_id"
+    t.string   "_mpurl"
+    t.string   "imie_pierwsze", limit: 64
+    t.string   "imie_drugie",   limit: 64
+    t.string   "nazwisko",      limit: 64
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mojepanstwo_pl_krs_people", ["_id"], name: "index_mojepanstwo_pl_krs_people_on__id", unique: true, using: :btree
+  add_index "mojepanstwo_pl_krs_people", ["_mpurl"], name: "index_mojepanstwo_pl_krs_people_on__mpurl", unique: true, using: :btree
+
+  create_table "mojepanstwo_pl_people", force: true do |t|
+    t.integer  "krs_person_id"
+    t.integer  "deputy_id"
+    t.integer  "entity_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mojepanstwo_pl_people", ["deputy_id"], name: "index_mojepanstwo_pl_people_on_deputy_id", unique: true, using: :btree
+  add_index "mojepanstwo_pl_people", ["entity_id"], name: "index_mojepanstwo_pl_people_on_entity_id", using: :btree
+  add_index "mojepanstwo_pl_people", ["krs_person_id"], name: "index_mojepanstwo_pl_people_on_krs_person_id", unique: true, using: :btree
+
+  create_table "mojepanstwo_pl_public_institutions", force: true do |t|
+    t.string   "name"
+    t.integer  "_id"
+    t.string   "slug"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "mojepanstwo_pl_public_orders", force: true do |t|
+    t.string   "slug"
+    t.string   "price"
+    t.integer  "status"
+    t.integer  "contractor_id"
+    t.integer  "procurer_id"
+    t.integer  "order_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+  end
+
+  create_table "mojepanstwo_pl_roles", force: true do |t|
+    t.integer  "krs_person_id"
+    t.integer  "krs_organization_id"
+    t.string   "function"
+    t.boolean  "canceled"
+    t.integer  "relation_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mojepanstwo_pl_roles", ["krs_organization_id"], name: "index_mojepanstwo_pl_roles_on_krs_organization_id", using: :btree
+  add_index "mojepanstwo_pl_roles", ["krs_person_id", "krs_organization_id", "function"], name: "unique_role", unique: true, using: :btree
+  add_index "mojepanstwo_pl_roles", ["krs_person_id"], name: "index_mojepanstwo_pl_roles_on_krs_person_id", using: :btree
+  add_index "mojepanstwo_pl_roles", ["relation_id"], name: "index_mojepanstwo_pl_roles_on_relation_id", using: :btree
 
   create_table "pg_search_documents", force: true do |t|
     t.text     "content"
@@ -114,7 +229,7 @@ ActiveRecord::Schema.define(version: 20150424111241) do
     t.text     "notes"
     t.string   "slug"
     t.boolean  "needs_work",           default: true,  null: false
-    t.boolean  "show_photo_as_header", default: true
+    t.boolean  "show_photo_as_header", default: false
     t.text     "lead"
     t.integer  "photo_id"
     t.boolean  "featured",             default: false
@@ -181,19 +296,6 @@ ActiveRecord::Schema.define(version: 20150424111241) do
     t.string "name"
   end
 
-  create_table "topics", force: true do |t|
-    t.string   "title",                          null: false
-    t.text     "description"
-    t.string   "slug"
-    t.boolean  "published",      default: false, null: false
-    t.integer  "entity_id"
-    t.integer  "photo_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "featured",       default: false
-    t.integer  "featured_order", default: 0
-  end
-
   create_table "users", force: true do |t|
     t.string   "email",                  default: "",    null: false
     t.string   "encrypted_password",     default: "",    null: false
@@ -210,21 +312,10 @@ ActiveRecord::Schema.define(version: 20150424111241) do
     t.string   "name",                   default: "",    null: false
     t.boolean  "admin",                  default: false, null: false
     t.string   "url"
-    t.string   "provider"
-    t.string   "uid"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-
-  create_table "version_associations", force: true do |t|
-    t.integer "version_id"
-    t.string  "foreign_key_name", null: false
-    t.integer "foreign_key_id"
-  end
-
-  add_index "version_associations", ["foreign_key_name", "foreign_key_id"], name: "index_version_associations_on_foreign_key", using: :btree
-  add_index "version_associations", ["version_id"], name: "index_version_associations_on_version_id", using: :btree
 
   create_table "versions", force: true do |t|
     t.string   "item_type",      null: false
@@ -234,25 +325,8 @@ ActiveRecord::Schema.define(version: 20150424111241) do
     t.text     "object"
     t.datetime "created_at"
     t.text     "object_changes"
-    t.integer  "transaction_id"
   end
 
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
-  add_index "versions", ["transaction_id"], name: "index_versions_on_transaction_id", using: :btree
-
-  create_table "votes", force: true do |t|
-    t.integer  "votable_id"
-    t.string   "votable_type"
-    t.integer  "voter_id"
-    t.string   "voter_type"
-    t.boolean  "vote_flag"
-    t.string   "vote_scope"
-    t.integer  "vote_weight"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "votes", ["votable_id", "votable_type", "vote_scope"], name: "index_votes_on_votable_id_and_votable_type_and_vote_scope", using: :btree
-  add_index "votes", ["voter_id", "voter_type", "vote_scope"], name: "index_votes_on_voter_id_and_voter_type_and_vote_scope", using: :btree
 
 end

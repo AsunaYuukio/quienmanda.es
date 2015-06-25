@@ -8,7 +8,7 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @title = 'Artículos'
+    @title = 'Artykuły'
     @posts = (can? :manage, Post) ? Post.all : Post.published
     @posts = @posts.order("published_at DESC").includes(:photo).page(params[:page]).per(9)
     fresh_when etag: @posts, :public => current_user.nil?
@@ -22,7 +22,7 @@ class PostsController < ApplicationController
       @title = @post.title
 
       # Get related entities and posts from content
-      # Note: I used to check that we weren't leaking unpublished related articles 
+      # Note: I used to check that we weren't leaking unpublished related articles
       # or entities at this point, but it makes no sense: if there's a mention in the
       # article content (i.e. a link in the text) we are leaking whether we show
       # the mentionee in the sidebar or not.
@@ -49,14 +49,13 @@ class PostsController < ApplicationController
       @related_entities.sort_by! &:priority
 
       # Parse shortcodes
-      @content = Shortcodes.shortcode(@post.content)
+      # @content = Shortcodes.shortcode(@post.content)
+      @content = @post.content
+
 
       # Facebook Open Graph metadata
       @fb_description = @post.lead unless @post.lead.blank?
       @fb_image_url = @post.photo.file.url(:full) unless @post.photo.nil? or @post.photo.file.nil?
-
-      # Twitter Photo Card metadata
-      @tw_card_photo = @fb_image_url
     end
   end
 
@@ -73,14 +72,6 @@ class PostsController < ApplicationController
         format.rss { redirect_to feed_posts_path(:format => :atom), :status => :moved_permanently }
       end
     end
-  end
-
-  # GET /posts/tagged/juicy
-  # Note: admin only (for now at least)
-  def tagged
-    authorize! :manage, Post
-    @posts = Post.tagged_with(params[:tag_name]).page(params[:page]).per(15)
-    render :index
   end
 
   private

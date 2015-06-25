@@ -29,9 +29,6 @@ class PhotosController < ApplicationController
       # Facebook Open Graph metadata
       @fb_description = @photo.footer unless @photo.footer.blank?
       @fb_image_url = @photo.file.url(:full) unless @photo.file.nil?
-
-      # Twitter Photo Card metadata
-      @tw_card_photo = @fb_image_url
     end
   end
 
@@ -55,38 +52,12 @@ class PhotosController < ApplicationController
     render :index
   end
 
-  # POST /photos/id/vote-up
-  def vote_up
-    photo = Photo.find(params[:id])
-    puts photo
-    if stale?(photo, :public => current_user.nil?)
-      photo.liked_by current_user
-      respond_to do |format|
-        msg = { :status => "ok", :votes => photo.get_likes.size }
-        format.json  { render :json => msg }
-      end
-    end
-  end
-
-  # POST /photos/id/vote-down
-  def vote_down
-    photo = Photo.find(params[:id])
-    puts photo
-    if stale?(photo, :public => current_user.nil?)
-      photo.unliked_by current_user
-      respond_to do |format|
-        msg = { :status => "ok", :votes => photo.get_likes.size }
-        format.json  { render :json => msg }
-      end
-    end
-  end
-
   private
     def set_photo
       @photo = Photo.includes(:related_entities, :annotations).find(params[:id])
     end
 
     def set_title
-      @title = 'El Fotomandón'
+      @title = 'W aparacie władzy'
     end
 end

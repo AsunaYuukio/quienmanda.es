@@ -3,8 +3,8 @@ if CKEDITOR?
     config.height = '500'
     config.allowedContent = true
 
-    config.language = 'es'
-    config.scayt_sLang = 'es_ES'
+    config.language = 'pl'
+    config.scayt_sLang = 'pl_PL'
     config.scayt_autoStartup = true
 
     config.toolbar_Pure = [

@@ -6,7 +6,7 @@ class PeopleController < ApplicationController
   # GET /people
   # GET /people.json
   def index
-    @title = 'Personas'
+    @title = 'Osoby'
     @people = (can? :manage, Entity) ? Entity.people : Entity.people.published
     if stale?(last_modified: @people.maximum(:updated_at), :public => current_user.nil?)
       @people = @people.order("updated_at DESC").page(params[:page]).per(12)
@@ -19,16 +19,19 @@ class PeopleController < ApplicationController
     authorize! :read, @person
     if stale?(@people, :public => current_user.nil?)
       @title = @person.short_or_long_name
-      @relations = (can? :manage, Entity) ? @person.relations : @person.relations.published
-      @relations = @relations.order("relations.from ASC")
+      @relations = []
+      if(can? :manage, Entity)
+        @person.relations
+      else
+        @person.relations.published.map{|e| if e.target.published && e.source.published then @relations.push e end}
+      end
+
+      embed_url = url_for controller: 'relation_visualizations', action: 'show', id: @person.slug
+      @embed = "<iframe width='600' height='475' src='#{embed_url}'></iframe>"
 
       # Facebook Open Graph metadata
       @fb_description = @person.description unless @person.description.blank?
       @fb_image_url = @person.avatar.url() unless @person.avatar.nil?
-
-      # Twitter Summary Card metadata
-      @tw_card_summary = @fb_description
-      @tw_card_photo = @fb_image_url
     end
   end
 

@@ -8,8 +8,6 @@ module ApplicationHelper
       return thing.person? ? '/shared/show_person' : '/shared/show_organization'
     when 'Photo'
       return '/shared/show_photo'
-    when 'Topic'
-      return '/shared/show_topic'
     end
     nil # Shouldn't happen
   end
